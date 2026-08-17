@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.ts",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 60
+      }
+    },
+    {
+      "src": "dist/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "dist/$1"
+    }
+  ],
+  "build": {
+    "env": {
+      "BUN_INSTALL_TIMEOUT": "0"
+    }
+  },
+  "ignoreCommand": "if [ -f bun.lockb ]; then rm bun.lockb; fi"
+}
