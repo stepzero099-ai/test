@@ -1,7 +1,0 @@
-{
-  "name": "Khabar Al-Lahza",
-  "description": "منصة إخبارية ذكية باللغة العربية تجمع الأخبار وتلخصها بحيادية مع ميزة الحكاية من الأول وسياق ويكيبيديا",
-  "requestFramePermissions": ["notifications"],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
-
