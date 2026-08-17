@@ -1,0 +1,42 @@
+name: 📰 Fetch News Every 15 Minutes
+
+on:
+  schedule:
+    # كل 15 دقيقة
+    - cron: '*/15 * * * *'
+  
+  # السماح بالتشغيل اليدوي للاختبار
+  workflow_dispatch:
+
+jobs:
+  fetch-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: 🔄 Trigger News Refresh
+        run: |
+          echo "📡 Fetching news from RSS feeds and APIs..."
+          echo "⏰ Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          
+          RESPONSE=$(curl -s -L -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -w "\n%{http_code}" \
+            --max-time 120 \
+            "${{ secrets.VERCEL_URL }}/api/news/refresh")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 HTTP Status: $HTTP_CODE"
+          echo "📄 Response: $BODY"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to refresh news!"
+            exit 1
+          fi
+          
+          echo "✅ News refreshed successfully!"
